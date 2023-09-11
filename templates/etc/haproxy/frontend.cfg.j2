@@ -17,7 +17,7 @@ frontend {{ frontend.name }}
   maxconn {{ frontend.maxconn }}
 {% endif %}
 {% if frontend.monitor_uri is defined %}
-  monitor_uri {{ frontend.monitor_uri }}
+  monitor-uri {{ frontend.monitor_uri }}
 {% endif %}
 {% for stick in frontend.stick | default([]) %}
   stick-table {{ stick.table }}

@@ -15,7 +15,7 @@ Set up (the latest version of) [HAProxy](http://www.haproxy.org/) in Ubuntu syst
 
 * `haproxy_use_ppa`: [default: `true`]: Whether or not to add the PPA (for installation)
 
-* `haproxy_version`: [default: `2.0`]: Version to install (e.g. `1.5`, `1.6`, `1.7`, `1.8`, `1.9`, `2.0`, `2.1`, `2.2`, `2.3`)
+* `haproxy_version`: [default: `2.0`]: Version to install (e.g. `1.5` ... `2.8`)
 
 * `haproxy_install`: [default: `[]`]: Additional packages to install (e.g. `socat`)
 
@@ -308,7 +308,7 @@ Set up (the latest version of) [HAProxy](http://www.haproxy.org/) in Ubuntu syst
 * `haproxy_backend.{n}.source`: [optional]: Set the source address or interface for connections from the proxy
 * `haproxy_backend.{n}.option`: [optional]: Options to set (e.g. `[forwardfor]`)
 * `haproxy_backend.{n}.no_option`: [optional]: Options to unset (e.g. `[redispatch]`)
-* `haproxy_backend.{n}.http_check`: [optional]: Make HTTP health checks consider response contents or specific status codes (e.g. `expect status 403`)
+* `haproxy_backend.{n}.http_check.{n}`: [optional]: Configure HTTP health checks (e.g. `expect status 403`, `send meth GET uri /healthz`)
 * `haproxy_backend.{n}.stick`: [optional]: Stick declarations
 * `haproxy_backend.{n}.stick.{n}.table`: [required]: Configure the stickiness table for the current section (e.g. `type ip size 500k`)
 * `haproxy_backend.{n}.stick.{n}.stick_on`: [optional]: Define a request pattern to associate a user to a server (e.g. `src`)
@@ -400,7 +400,9 @@ Set up (the latest version of) [HAProxy](http://www.haproxy.org/) in Ubuntu syst
 * `haproxy_backend.{n}.server_dynamic.{n}.param`: [optional]: A list of parameters to apply on each backend server.
 * `haproxy_backend.{n}.retry_on`: [optional, default `[]`]: Specify when to attempt to automatically retry a failed request. Provide a list of keywords or HTTP status codes, each representing a type of failure event on which an attempt to retry the request is desired. For details, see HAProxy documentation.
 * `haproxy_backend.{n}.retries`: [optional]: Number of retries to perform on a server after a connection failure
-
+* `haproxy_backend.{n}.email_alert`: [default: `[]`]: Specify email alerts option
+* `haproxy_backend.{n}.email_alert.{n}.code`: [required]: Email alert key can be : mailers, from, to or level
+* `haproxy_backend.{n}.email_alert.{n}.value`: [required]: Email alert key value
 
 * `haproxy_backend.{n}.errorfile`: [optional]: Errorfile declarations
 * `haproxy_backend.{n}.errorfile.{n}.code`: [required]: The HTTP status code. Currently, HAProxy is capable of generating codes 200, 400, 403, 408, 500, 502, 503, and 504 (e.g. `400`)
@@ -461,6 +463,13 @@ Set up (the latest version of) [HAProxy](http://www.haproxy.org/) in Ubuntu syst
 * `haproxy_program.{n}.option`: [default: `[]`]: Options to enable
 * `haproxy_program.{n}.no_option`: [default: `[]`]: Options to inverse/disable
 
+* `haproxy_mailers`: [default: `[]`]: Mailers declarations
+* `haproxy_mailers.{n}.name`: [required]: The name of the mailers group
+* `haproxy_mailers.{n}.servers`: [default: `[]`]: SMTP servers declarations
+* `haproxy_mailers.{n}.servers.{n}.name`: [required]: SMTP server name
+* `haproxy_mailers.{n}.servers.{n}.host`: [required]: SMTP server host
+* `haproxy_mailers.{n}.servers.{n}.port`: [default: `25`]: SMTP server name port
+
 ## Dependencies
 
 None
@@ -476,7 +485,7 @@ None
 ---
 - hosts: all
   roles:
-    - haproxy
+    - oefenweb.haproxy
   vars:
     haproxy_ssl_map:
       - src: ../../../files/haproxy/etc/haproxy/ssl/star-example0-com.pem
@@ -598,7 +607,7 @@ None
 ```yaml
 - hosts: all
   roles:
-    - haproxy
+    - oefenweb.haproxy
   vars:
     haproxy_global_stats_sockets_default_param:
       - 'mode 660'
@@ -726,7 +735,7 @@ None
 ---
 - hosts: all
   roles:
-    - haproxy
+    - oefenweb.haproxy
   vars:
     haproxy_frontend:
       - name: memcached
@@ -761,7 +770,7 @@ None
 ---
 - hosts: all
   roles:
-    - haproxy
+    - oefenweb.haproxy
   vars:
     haproxy_listen:
       - name: redis
